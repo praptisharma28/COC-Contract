@@ -10,6 +10,8 @@ pub enum ErrorCode {
 
     #[msg("Role name cannot be empty.")]
     InvalidRoleName,
+    #[msg("User is already assigned with the role")]
+    UserAlreadyAssigned,
 
     #[msg("Unauthorized access")]
     Unauthorized,

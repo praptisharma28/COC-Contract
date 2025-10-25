@@ -1,11 +1,9 @@
 // This file governs who can do what in your system.
 
-pub use crate::errors::ErrorCode;
-use crate::states::*;
+use crate::errors::ErrorCode;
+use crate::states::{Controller, UserRole};
+use crate::utils::has_permission;
 use anchor_lang::prelude::*;
-
-pub use utils::has_permission;
-pub use utils::ErrorCode;
 
 /// ------------------------------------------------------------------------
 ///  INITIALIZE ACCESS CONTROL
@@ -26,7 +24,7 @@ pub struct InitializeAccessControl<'info> {
     ///    - Contains `default_admin` pubkey.
     ///    - Derived from static seed "controller" (unique to program).
     ///    - Only created once.
-    #[account(zzzzz
+    #[account(
         init,
         payer = admin,
         space = 8 + 32 + 1, // discriminator + fields
@@ -47,6 +45,7 @@ pub struct InitializeAccessControl<'info> {
 /// Example roles: "Verifier", "Issuer", "IndustryAdmin".
 ///
 #[derive(Accounts)]
+#[instruction(role_name: String)]
 pub struct CreateRole<'info> {
     ///  The main controller PDA.
     ///    Ensures that only the program’s main authority can create roles.
@@ -100,7 +99,7 @@ pub struct AssignUserToRole<'info> {
 }
 
 impl<'info> InitializeAccessControl<'info> {
-    pub fn initialize_access_control(&mut self) -> Result<()> {
+    pub fn initialize_access_control(&mut self, bump: u8) -> Result<()> {
         //  Ensure it runs only once
         require!(
             self.controller.to_account_info().data_is_empty(),
@@ -112,13 +111,13 @@ impl<'info> InitializeAccessControl<'info> {
 
         // Set the default admin to the signer
         self.controller.default_admin = *self.admin.key;
-        controller.bump = *ctx.bumps.get("controller").unwrap();
+        self.controller.bump = bump;
         Ok(())
     }
 }
 
 impl<'info> CreateRole<'info> {
-    pub fn create_role(&mut self, role_name: String, actions: Vec<String>) -> Result<()> {
+    pub fn create_role(&mut self, role_name: String, actions: Vec<String>, bump: u8) -> Result<()> {
         //  Ensure only default admin can create roles
         require!(
             self.admin.key() == self.controller.default_admin,
@@ -133,7 +132,7 @@ impl<'info> CreateRole<'info> {
         self.user_role.role_name = role_name;
         self.user_role.actions = actions;
         self.user_role.users = Vec::new();
-        self.user_role.bump = *ctx.bumps.get("user_role").unwrap();
+        self.user_role.bump = bump;
         Ok(())
     }
 }
