@@ -1,18 +1,19 @@
 use anchor_lang::prelude::*;
 
-pub mod constants;
-pub mod errors;
-pub mod instructions;
-pub mod states;
-pub mod utils;
+mod constants;
+mod errors;
+mod instructions;
+mod states;
+mod utils;
 
-declare_id!("67NqH9UEtNMZCcqs1iAZG5TWJzfyqK8DgYnvGx1EECBL");
+pub use instructions::*;
+pub use states::*;
+
+declare_id!("4yU1TuZVZ38AXdw5ws1EHW4yqPRFjxb6BjZC2SB5C1gY");
 
 #[program]
 pub mod coc {
     use super::*;
-    use crate::instructions::*;
-    use crate::states::UserRole;
 
     pub fn initialize_access_control(ctx: Context<InitializeAccessControl>) -> Result<()> {
         let bump = ctx.bumps.controller;
@@ -31,8 +32,7 @@ pub mod coc {
     pub fn assign_user_to_role(
         ctx: Context<AssignUserToRole>,
         user: Pubkey,
-        user_roles: Vec<Account<UserRole>>,
     ) -> Result<()> {
-        ctx.accounts.assign_user_to_role(user, user_roles)
+        ctx.accounts.assign_user_to_role(user)
     }
 }

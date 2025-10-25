@@ -2,7 +2,6 @@
 
 use crate::errors::ErrorCode;
 use crate::states::{Controller, UserRole};
-use crate::utils::has_permission;
 use anchor_lang::prelude::*;
 
 /// ------------------------------------------------------------------------
@@ -49,7 +48,7 @@ pub struct InitializeAccessControl<'info> {
 pub struct CreateRole<'info> {
     ///  The main controller PDA.
     ///    Ensures that only the program’s main authority can create roles.
-    #[account(mut, has_one = default_admin)]
+    #[account(mut)]
     pub controller: Account<'info, Controller>,
 
     ///  The PDA for the new role being created.
@@ -141,15 +140,13 @@ impl<'info> AssignUserToRole<'info> {
     pub fn assign_user_to_role(
         &mut self,
         user: Pubkey,
-        user_roles: Vec<Account<UserRole>>,
     ) -> Result<()> {
         let admin = &self.admin;
         let controller = &self.controller;
         let role = &mut self.user_role;
 
-        // Allow default admin OR someone with the "assign" permission
-        let authorized = admin.key() == controller.default_admin
-            || has_permission(&user_roles, &admin.key(), "assign");
+        // Allow only default admin for now
+        let authorized = admin.key() == controller.default_admin;
 
         require!(authorized, ErrorCode::Unauthorized);
 

@@ -1,13 +1,10 @@
 // All the utility functions that support the main logic of your program is here
 
-use crate::states::UserRole;
 use anchor_lang::prelude::*;
 
-pub fn has_permission(user_roles: &Vec<Account<UserRole>>, user: &Pubkey, action: &str) -> bool {
-    for role in user_roles {
-        if role.users.contains(user) && role.actions.contains(&action.to_string()) {
-            return true;
-        }
-    }
+/// Helper function to check if a user has a specific permission
+/// This is a placeholder - implement with remaining_accounts when needed
+pub fn has_permission(_user_roles: &[Pubkey], _user: &Pubkey, _action: &str) -> bool {
+    // For now, return false - only default_admin can perform actions
     false
 }
