@@ -13,6 +13,22 @@ pub enum ErrorCode {
     #[msg("User is already assigned with the role")]
     UserAlreadyAssigned,
 
+    // industry errors
+    #[msg("Bond amount is invalid")]
+    InvalidBondAmount,
+    #[msg("Company name is invalid")]
+    InvalidBondAmount,
+    #[msg("System program is invalid")]
+    InvalidSystemProgram,
+
+    // report emission errors
+    #[msg("Industry not active")]
+    IndustryNotActive,
+    #[msg("Emission amount cant be 0")]
+    InvalidEmissionAmount,
+    #[msg("token account owner is invalid")]
+    InvalidTokenAccountOwner,
+
     #[msg("Unauthorized access")]
     Unauthorized,
     #[msg("Insufficient permissions for this action")]

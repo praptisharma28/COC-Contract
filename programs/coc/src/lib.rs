@@ -29,10 +29,27 @@ pub mod coc {
         ctx.accounts.create_role(role_name, actions, bump)
     }
 
-    pub fn assign_user_to_role(
-        ctx: Context<AssignUserToRole>,
-        user: Pubkey,
-    ) -> Result<()> {
+    pub fn assign_user_to_role(ctx: Context<AssignUserToRole>, user: Pubkey) -> Result<()> {
         ctx.accounts.assign_user_to_role(user)
+    }
+
+    pub fn onboard_industry(
+        ctx: Context<OnboardIndustry>,
+        company_name: String,
+        registration_number: String,
+        bond_amount: u64,
+    ) -> Result<()> {
+        // derive the bump for the PDA
+        let bump = ctx.bumps.industry;
+        ctx.accounts
+            .onboard_industry(company_name, registration_number, bond_amount, bump)
+    }
+
+    pub fn report_emissions(
+        ctx: Context<ReportEmission>,
+        co2_tonnes: u64,
+        reporting_period: String,
+    ) -> Result<()> {
+        ctx.accounts.report_emissions(co2_tonnes, reporting_period)
     }
 }
